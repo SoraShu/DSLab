@@ -2,45 +2,52 @@
 #include<stdlib.h>
 #include<string.h>
 
-typedef struct node{
+typedef struct node
+{
     char StuID[11];
     int Grade;
     struct node *next;
-}StudentLinkedListNode;
+} StudentLinkedListNode;
 
 
-/* åˆ›å»ºç›¸äº¤é“¾è¡¨ */
-void createCrossLink(StudentLinkedListNode* a, StudentLinkedListNode* b, int beforeCross1, int beforeCross2){
-    // aå’Œbåé¢è‹¥å¹²ç»“ç‚¹å€¼ç›¸åŒ
-    // beforeCross1ä¸ºè·³è¿‡çš„aä¸­çš„ä¸ªæ•°ï¼Œä»ç¬¬beforeCross1 + 1ä¸ªç»“ç‚¹å¼€å§‹ç›¸äº¤
-    // beforeCross2ä¸ºè·³è¿‡çš„bä¸­çš„ä¸ªæ•°ï¼Œä»ç¬¬beforeCross2 + 1ä¸ªç»“ç‚¹å¼€å§‹ç›¸äº¤
-    // ç›¸äº¤æ–¹æ³•æ˜¯å°†bä¸­çš„å‰ä¸€ç»“ç‚¹æŒ‡å‘aä¸­çš„é¦–ä¸ªç›¸äº¤ç»“ç‚¹
+/* ´´½¨Ïà½»Á´±í */
+void createCrossLink(StudentLinkedListNode* a, StudentLinkedListNode* b, int beforeCross1, int beforeCross2)
+{
+    // aºÍbºóÃæÈô¸É½áµãÖµÏàÍ¬
+    // beforeCross1ÎªÌø¹ıµÄaÖĞµÄ¸öÊı£¬´ÓµÚbeforeCross1 + 1¸ö½áµã¿ªÊ¼Ïà½»
+    // beforeCross2ÎªÌø¹ıµÄbÖĞµÄ¸öÊı£¬´ÓµÚbeforeCross2 + 1¸ö½áµã¿ªÊ¼Ïà½»
+    // Ïà½»·½·¨ÊÇ½«bÖĞµÄÇ°Ò»½áµãÖ¸ÏòaÖĞµÄÊ×¸öÏà½»½áµã
     StudentLinkedListNode *p, *q;
     while(beforeCross1--)a=a->next;
     while(--beforeCross2)b=b->next;
     p = b->next;
     b->next = a;
-    //é”€æ¯é‡æŒ‡é’ˆç»“ç‚¹
-    while(p){
+    //Ïú»ÙÒ°Ö¸Õë½áµã
+    while(p)
+    {
         q = p->next;
         free(p);
         p = q;
     }
 }
 
-void destroyCrossLink(StudentLinkedListNode* a, StudentLinkedListNode* b, StudentLinkedListNode* crossNode){
+void destroyCrossLink(StudentLinkedListNode* a, StudentLinkedListNode* b, StudentLinkedListNode* crossNode)
+{
     StudentLinkedListNode* p = crossNode->next, *q;
-    while(p){
+    while(p)
+    {
         q = p->next;
         free(p);
         p = q;
     }
-    while(a != crossNode){
+    while(a != crossNode)
+    {
         q = a->next;
         free(a);
         a = q;
     }
-    while(b != crossNode){
+    while(b != crossNode)
+    {
         q = b->next;
         free(b);
         b = q;
@@ -48,24 +55,29 @@ void destroyCrossLink(StudentLinkedListNode* a, StudentLinkedListNode* b, Studen
     free(crossNode);
 }
 
-/* æ‰“å°å•ä¸ªèŠ‚ç‚¹ */
-void printLinkedListNode(StudentLinkedListNode * node){
+/* ´òÓ¡µ¥¸ö½Úµã */
+void printLinkedListNode(StudentLinkedListNode * node)
+{
     printf("{ID:%s, Grade:%d}", node->StuID, node->Grade);
-    if(node->next!=NULL){
+    if(node->next!=NULL)
+    {
         printf("->");
-    }else{
+    }
+    else
+    {
         printf("\n");
     }
 
 }
 
-/** è¾“å‡ºè¯¥è¡¨çš„æˆç»©æƒ…å†µ */
-void outputStudentLinkedList(StudentLinkedListNode* head){
-    // ç”¨äºå•ä¸ªèŠ‚ç‚¹è¾“å‡ºçš„å‡½æ•°printLinkedListNodeå·²æä¾›
-    //è¯·ä½ å®ç°éå†é“¾è¡¨çš„é€»è¾‘
-	//TODO
-	StudentLinkedListNode* p=head;
-	while(p)
+/** Êä³ö¸Ã±íµÄ³É¼¨Çé¿ö */
+void outputStudentLinkedList(StudentLinkedListNode* head)
+{
+    // ÓÃÓÚµ¥¸ö½ÚµãÊä³öµÄº¯ÊıprintLinkedListNodeÒÑÌá¹©
+    //ÇëÄãÊµÏÖ±éÀúÁ´±íµÄÂß¼­
+    //TODO
+    StudentLinkedListNode* p=head;
+    while(p)
     {
         printLinkedListNode(p);
         p=p->next;
@@ -73,20 +85,22 @@ void outputStudentLinkedList(StudentLinkedListNode* head){
 }
 
 
-/** æ–°å»ºä¸€ä¸ªé“¾è¡¨nodeå¹¶è¿”å› */
-StudentLinkedListNode* studentLinkedListCreate(char student_id[], int grade) {
-    //tips:mallocçš„æ—¶å€™è®°å¾—ä¸ºè½¬åŒ–ä¸ºç»“æ„ä½“æŒ‡é’ˆ
-	//TODO
-	StudentLinkedListNode* p=NULL;
-	p=(StudentLinkedListNode*)malloc(sizeof(StudentLinkedListNode));
-	strcpy(p->StuID,student_id);
-	p->Grade=grade;
-	return p;
+/** ĞÂ½¨Ò»¸öÁ´±ínode²¢·µ»Ø */
+StudentLinkedListNode* studentLinkedListCreate(char student_id[], int grade)
+{
+    //tips:mallocµÄÊ±ºò¼ÇµÃÎª×ª»¯Îª½á¹¹ÌåÖ¸Õë
+    //TODO
+    StudentLinkedListNode* p=NULL;
+    p=(StudentLinkedListNode*)malloc(sizeof(StudentLinkedListNode));
+    strcpy(p->StuID,student_id);
+    p->Grade=grade;
+    return p;
 }
 
 
-/** æŒ‰ç…§é™åºæ’å…¥å­¦ç”Ÿçš„æˆç»©æƒ…å†µ,å¹¶è¿”å›é“¾è¡¨å¤´æŒ‡é’ˆ */
-StudentLinkedListNode* studentLinkedListAdd(StudentLinkedListNode* head, StudentLinkedListNode* node) {
+/** °´ÕÕ½µĞò²åÈëÑ§ÉúµÄ³É¼¨Çé¿ö,²¢·µ»ØÁ´±íÍ·Ö¸Õë */
+StudentLinkedListNode* studentLinkedListAdd(StudentLinkedListNode* head, StudentLinkedListNode* node)
+{
     //TODO
     node->next=head;
     return node;
@@ -94,25 +108,27 @@ StudentLinkedListNode* studentLinkedListAdd(StudentLinkedListNode* head, Student
 }
 
 
-/** åè½¬é“¾è¡¨ */
-StudentLinkedListNode* reverseLinkedList(StudentLinkedListNode*head){
+/** ·´×ªÁ´±í */
+StudentLinkedListNode* reverseLinkedList(StudentLinkedListNode*head)
+{
     //TODO
     StudentLinkedListNode *p=NULL,*q=NULL;
-    p=head->next;
+    p=head;
     while(p->next)
     {
         q=p->next;
         p->next=q->next;
         q->next=head;
-        head=q;//æ­£ç¡®ä¸å¦å¾…å®š
+        head=q;//ÕıÈ·Óë·ñ´ı¶¨
     }
     return head;
 }
 
-/** æ‰¾åˆ°ç›¸äº¤çš„ç¬¬ä¸€ä¸ªç»“ç‚¹ */
-StudentLinkedListNode* findCrossBeginNode(StudentLinkedListNode* class1, StudentLinkedListNode* class2) {
-    //class1å’Œclass2åœ¨åä¸€éƒ¨åˆ†å®Œå…¨é‡åˆï¼ˆç»“ç‚¹çš„å†…å­˜åœ°å€ç›¸åŒï¼‰ï¼Œè¯·æ‰¾å‡ºå¹¶è¿”å›å¼€å§‹ç›¸äº¤çš„ç¬¬ä¸€ä¸ªç»“ç‚¹ã€‚
-    //è¯·ä¸è¦ç®€å•åœ°é€šè¿‡ç»“ç‚¹ç»“æ„ä½“çš„æˆå‘˜æ¥åˆ¤æ–­ã€‚
+/** ÕÒµ½Ïà½»µÄµÚÒ»¸ö½áµã */
+StudentLinkedListNode* findCrossBeginNode(StudentLinkedListNode* class1, StudentLinkedListNode* class2)
+{
+    //class1ºÍclass2ÔÚºóÒ»²¿·ÖÍêÈ«ÖØºÏ£¨½áµãµÄÄÚ´æµØÖ·ÏàÍ¬£©£¬ÇëÕÒ³ö²¢·µ»Ø¿ªÊ¼Ïà½»µÄµÚÒ»¸ö½áµã¡£
+    //Çë²»Òª¼òµ¥µØÍ¨¹ı½áµã½á¹¹ÌåµÄ³ÉÔ±À´ÅĞ¶Ï¡£
     //TODO
     int Length_1=0,Length_2=0;
     StudentLinkedListNode *p1=class1,*p2=class2;
@@ -128,14 +144,14 @@ StudentLinkedListNode* findCrossBeginNode(StudentLinkedListNode* class1, Student
     }
     if(Length_1>Length_2)
     {
-        for(int i=1;i<=Length_1-Length_2;i++)
+        for(int i=1; i<=Length_1-Length_2; i++)
         {
             class1=class1->next;
         }
     }
     else
     {
-        for(int i=1;i<=Length_2-Length_1;i++)
+        for(int i=1; i<=Length_2-Length_1; i++)
         {
             class2=class2->next;
         }
@@ -148,7 +164,8 @@ StudentLinkedListNode* findCrossBeginNode(StudentLinkedListNode* class1, Student
     return class1->next;
 }
 
-int main(){
+int main()
+{
     freopen("./gradeImport.in","r",stdin);
 
     StudentLinkedListNode *class1=NULL, *class2=NULL;
@@ -158,15 +175,18 @@ int main(){
     int beforeCross1, beforeCross2;
     StudentLinkedListNode *node;
 
-    while(~scanf("%d%d", &num1, &num2)){
+    while(~scanf("%d%d", &num1, &num2))
+    {
         class1 = class2 = NULL;
-        // å­˜å‚¨æ•°æ®åˆ°é“¾è¡¨
-        for(i = 0;i < num1;i++){
+        // ´æ´¢Êı¾İµ½Á´±í
+        for(i = 0; i < num1; i++)
+        {
             scanf("%s%d", student_id, &grade);
             node = studentLinkedListCreate(student_id, grade);
             class1 = studentLinkedListAdd(class1, node);
         }
-        for(i = 0;i < num2;i++){
+        for(i = 0; i < num2; i++)
+        {
             scanf("%s%d", student_id, &grade);
             node = studentLinkedListCreate(student_id, grade);
             class2 = studentLinkedListAdd(class2, node);
@@ -176,7 +196,7 @@ int main(){
         printf("class2:\n");
         outputStudentLinkedList(class2);
 
-        // åè½¬é“¾è¡¨
+        // ·´×ªÁ´±í
         class1 = reverseLinkedList(class1);
         class2 = reverseLinkedList(class2);
         printf("* part2:\nclass1:\n");
@@ -184,16 +204,16 @@ int main(){
         printf("class2:\n");
         outputStudentLinkedList(class2);
 
-        // ç”Ÿæˆç›¸äº¤é“¾è¡¨
+        // Éú³ÉÏà½»Á´±í
         scanf("%d%d",&beforeCross1,&beforeCross2);
         createCrossLink(class1, class2, beforeCross1, beforeCross2);
 
-        // æ‰“å°ç›¸äº¤ç»“ç‚¹
+        // ´òÓ¡Ïà½»½áµã
         node = findCrossBeginNode(class1, class2);
         printf("* part3:\n");
         printf("{ID:%s, Grade:%d}\n", node->StuID, node->Grade);
 
-        //é”€æ¯ç›¸äº¤é“¾è¡¨
+        //Ïú»ÙÏà½»Á´±í
         destroyCrossLink(class1, class2, node);
 
         printf("\n");
