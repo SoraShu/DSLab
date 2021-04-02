@@ -156,12 +156,12 @@ StudentLinkedListNode* findCrossBeginNode(StudentLinkedListNode* class1, Student
             class2=class2->next;
         }
     }
-    while(class1&&class2&&class1->next!=class2->next)
+    while(class1&&class2&&class1!=class2)
     {
         class1=class1->next;
         class2=class2->next;
     }
-    return class1->next;
+    return class1;
 }
 
 int main()

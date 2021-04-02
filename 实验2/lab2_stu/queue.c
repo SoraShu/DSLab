@@ -1,6 +1,6 @@
 #include "queue.h"
 
-/** ！！要求使用栈实现队列，因此只能使用stack.h中的函数。不允许直接访问stack的底层实现！！
+/** ！！要求使用栈实现队列，因此只能使用stack.h中的函数。不允许直接访问stack的底层实现！！*/
 
 /**
  * 初始化队列
@@ -58,6 +58,33 @@ int EnQueue(Queue *Q, DataType e)
         认真思考，从哪个栈Push元素，时间复杂度如何？能否降低
     */
     //TODO
+    int L=QueueLength(*Q);
+    if(L==MaxSize)
+        return 0;
+    else
+    {
+        Push(&(Q->stack1),e);
+        return 1;
+        /*
+        if(StackLength(Q->stack1)==MaxSize)
+            Push(Q->stack1,e);
+        else
+        {
+            DataType temp[MaxSize];
+            StackToArray(Q->stack2,temp);
+            DataType *temp1=temp+StackLength(Q->stack2);
+            StackToArray(Q->stack1,temp1);
+            if(StackEmpty(Q->stack1)==0)    return 0;
+            if(StackEmpty(Q->stack2)==0)    return 0;
+            for(L=L-1; L>=0; L--)
+            {
+                (Push(Q->stack2,temp[L])==0);
+            }
+            Push(Q->stack1,e);
+            return 1;
+        }
+        */
+    }
 }
 
 /**
@@ -72,6 +99,27 @@ int DeQueue(Queue *Q, DataType *e)
         认真思考，从哪个栈Pop元素，时间复杂度如何？能否降低
     */
     //TODO
+    if(QueueLength(*Q)==0)
+        return 0;
+    else
+    {
+        if(StackLength(Q->stack2))
+        {
+            Pop(&(Q->stack2),e);
+            return 1;
+        }
+        else
+        {
+            DataType temp[MaxSize];
+            StackToArray(Q->stack1,temp);
+            int i=StackLength(Q->stack1);
+            StackEmpty(Q->stack1);
+            for(i=i-1; i>=0; i--)
+                Push(&(Q->stack2),temp[i]);
+            Pop(&(Q->stack2),e);
+            return 1;
+        }
+    }
 }
 
 /**
@@ -83,6 +131,23 @@ int DeQueue(Queue *Q, DataType *e)
 int GetHead(Queue Q, DataType *e)
 {
     //TODO
+    if(QueueLength(Q)==0)
+        return 0;
+    else
+    {
+        if(StackLength(Q.stack2))
+        {
+            GetTop(Q.stack2,e);
+            return 1;
+        }
+        else
+        {
+            DataType temp[MaxSize];
+            StackToArray(Q.stack1,temp);
+            *e=temp[0];
+            return 1;
+        }
+    }
 }
 
 /**
@@ -96,4 +161,12 @@ void QueueToArray(Queue Q, DataType *seq)
         取决于你的栈如何设计，元素存在哪个队列里。
     */
     //TODO
+    DataType temp[MaxSize];
+    StackToArray(Q.stack2,temp);
+    for(int i=StackLength(Q.stack2)-1;i>=0;i--)
+    {
+        *seq=temp[i];
+        seq++;
+    }
+    StackToArray(Q.stack1,seq);
 }

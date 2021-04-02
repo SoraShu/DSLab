@@ -41,7 +41,7 @@ void StackToArray(Stack S, DataType *seq)
 int StackEmpty(Stack S)
 {
     //TODO
-    if(S.top=-1)
+    if(S.top==-1)
         return 1;
     else
         return 0;
@@ -98,7 +98,7 @@ int GetTop(Stack S, DataType *e)
         return 0;
     else
     {
-        *e=S->data[S->top];
+        *e=S.data[S.top];
         return 1;
     }
 }
