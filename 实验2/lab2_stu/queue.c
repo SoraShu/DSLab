@@ -52,38 +52,21 @@ int QueueEmpty(Queue Q)
  * @param e 插入的元素
  * @return 如果插入成功返回1，否则返回0
  */
-int EnQueue(Queue *Q, DataType e)
+int EnQueue(Queue *Q, DataType e)//设计向stack1压入元素，从stack2弹出元素
 {
     /*
         认真思考，从哪个栈Push元素，时间复杂度如何？能否降低
     */
     //TODO
+    //设计向stack1压入元素，从stack2弹出元素
+    //时间复杂度为O(1)
     int L=QueueLength(*Q);
     if(L==MaxSize)
         return 0;
-    else
+    else//不会出现stack1满的情况，stack1满时queue也满
     {
         Push(&(Q->stack1),e);
         return 1;
-        /*
-        if(StackLength(Q->stack1)==MaxSize)
-            Push(Q->stack1,e);
-        else
-        {
-            DataType temp[MaxSize];
-            StackToArray(Q->stack2,temp);
-            DataType *temp1=temp+StackLength(Q->stack2);
-            StackToArray(Q->stack1,temp1);
-            if(StackEmpty(Q->stack1)==0)    return 0;
-            if(StackEmpty(Q->stack2)==0)    return 0;
-            for(L=L-1; L>=0; L--)
-            {
-                (Push(Q->stack2,temp[L])==0);
-            }
-            Push(Q->stack1,e);
-            return 1;
-        }
-        */
     }
 }
 
@@ -99,23 +82,25 @@ int DeQueue(Queue *Q, DataType *e)
         认真思考，从哪个栈Pop元素，时间复杂度如何？能否降低
     */
     //TODO
+    //设计向stack1压入元素，从stack2弹出元素
+    //时间复杂度为O(n)
     if(QueueLength(*Q)==0)
         return 0;
-    else
+    else//可能出现stack2为空的情况
     {
         if(StackLength(Q->stack2))
         {
             Pop(&(Q->stack2),e);
             return 1;
         }
-        else
+        else//stack2为空
         {
             DataType temp[MaxSize];
             StackToArray(Q->stack1,temp);
             int i=StackLength(Q->stack1);
-            StackEmpty(Q->stack1);
+            InitStack(&(Q->stack1));//获取stack1的数组拷贝并清空stack1
             for(i=i-1; i>=0; i--)
-                Push(&(Q->stack2),temp[i]);
+                Push(&(Q->stack2),temp[i]);//将数组拷贝逐项压入stack2
             Pop(&(Q->stack2),e);
             return 1;
         }
@@ -143,8 +128,8 @@ int GetHead(Queue Q, DataType *e)
         else
         {
             DataType temp[MaxSize];
-            StackToArray(Q.stack1,temp);
-            *e=temp[0];
+            StackToArray(Q.stack1,temp);//获取stack1的数组拷贝
+            *e=temp[0];//e接受队列头元素
             return 1;
         }
     }
@@ -163,10 +148,10 @@ void QueueToArray(Queue Q, DataType *seq)
     //TODO
     DataType temp[MaxSize];
     StackToArray(Q.stack2,temp);
-    for(int i=StackLength(Q.stack2)-1;i>=0;i--)
+    for(int i=StackLength(Q.stack2)-1;i>=0;i--)//倒序将数组拷贝赋值给seq各元素
     {
         *seq=temp[i];
         seq++;
-    }
+    }//指针已前移
     StackToArray(Q.stack1,seq);
 }

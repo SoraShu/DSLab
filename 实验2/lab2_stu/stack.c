@@ -80,7 +80,7 @@ int Pop(Stack *S, DataType *e)
     else
     {
         *e=S->data[S->top];
-        S->top--;
+        S->top--;//栈顶指针下移即为删除栈顶元素
         return 1;
     }
 }

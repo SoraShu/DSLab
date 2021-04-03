@@ -77,7 +77,7 @@ void outputStudentLinkedList(StudentLinkedListNode* head)
     //请你实现遍历链表的逻辑
     //TODO
     StudentLinkedListNode* p=head;
-    while(p)
+    while(p)//通过循环遍历链表，当p指向空时结束循环
     {
         printLinkedListNode(p);
         p=p->next;
@@ -92,7 +92,7 @@ StudentLinkedListNode* studentLinkedListCreate(char student_id[], int grade)
     //TODO
     StudentLinkedListNode* p=NULL;
     p=(StudentLinkedListNode*)malloc(sizeof(StudentLinkedListNode));
-    strcpy(p->StuID,student_id);
+    strcpy(p->StuID,student_id);//字符串的赋值需采用strcpy
     p->Grade=grade;
     return p;
 }
@@ -102,7 +102,7 @@ StudentLinkedListNode* studentLinkedListCreate(char student_id[], int grade)
 StudentLinkedListNode* studentLinkedListAdd(StudentLinkedListNode* head, StudentLinkedListNode* node)
 {
     //TODO
-    node->next=head;
+    node->next=head;//将新节点的next指针指向头节点
     return node;
 
 }
@@ -114,12 +114,12 @@ StudentLinkedListNode* reverseLinkedList(StudentLinkedListNode*head)
     //TODO
     StudentLinkedListNode *p=NULL,*q=NULL;
     p=head;
-    while(p->next)
+    while(p->next)//每次循环将未反转的第一个节点摘下并用头插法插入链表
     {
         q=p->next;
         p->next=q->next;
         q->next=head;
-        head=q;//正确与否待定
+        head=q;
     }
     return head;
 }
@@ -132,17 +132,17 @@ StudentLinkedListNode* findCrossBeginNode(StudentLinkedListNode* class1, Student
     //TODO
     int Length_1=0,Length_2=0;
     StudentLinkedListNode *p1=class1,*p2=class2;
-    while(p1)
+    while(p1)//循环求class1的链表长度
     {
         Length_1++;
         p1=p1->next;
     }
-    while(p2)
+    while(p2)//循环求class2的链表长度
     {
         Length_2++;
         p2=p2->next;
     }
-    if(Length_1>Length_2)
+    if(Length_1>Length_2)//作差，指针前进
     {
         for(int i=1; i<=Length_1-Length_2; i++)
         {
@@ -156,7 +156,7 @@ StudentLinkedListNode* findCrossBeginNode(StudentLinkedListNode* class1, Student
             class2=class2->next;
         }
     }
-    while(class1&&class2&&class1!=class2)
+    while(class1&&class2&&class1!=class2)//当指针前进到相同地址时找到交点
     {
         class1=class1->next;
         class2=class2->next;
