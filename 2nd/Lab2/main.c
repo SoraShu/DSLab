@@ -204,37 +204,37 @@ void destoryTree(TreeNodePtr root)
 TreeNodePtr createTreeWithLevelOrder(int *data, int size)
 {
     if(*data==-1)
-        return NULL;
+        return NULL;//只有一个#则返回NULL
     QueuePtr Q=InitQueue();
     TreeNodePtr Thead,T=NULL;
     int i=0;
     Thead=createTreeNode(data[i],NULL,NULL);
-    EnQueue(Q,Thead);
+    EnQueue(Q,Thead);//创建根节点并令根节点入队
     while((!QueueEmpty(Q))&&i<size-1)
     {
         T=GetHead(Q);
-        DeQueue(Q);
-        if(T==NULL)
+        DeQueue(Q);//若队列非空,头元素出队
+        if(T==NULL)//若节点是NULL,易知填充其孩子节点的亦是NULL
         {
-            i+=2;
+            i+=2;//读入两个-1
             EnQueue(Q,NULL);
-            EnQueue(Q,NULL);
-            continue;
+            EnQueue(Q,NULL);//两个占位的NULL入队
+            continue;//进入下一次循环
         }
         if(++i>=size)
-            break;
-        if(data[i]!=-1)
+            break;//不再读入数据时结束循环
+        if(data[i]!=-1)//若读入的data不是-1,创建此节点的左孩子节点
         {
             T->left=createTreeNode(data[i],NULL,NULL);
-        }
-        EnQueue(Q,T->left);
+        }//若读入的是-1,由于创建节点时已初始化其left与right指针指向NULL故无需操作
+        EnQueue(Q,T->left);//该节点的left域的值入队
         if(++i>=size)
-            break;
-        if(data[i]!=-1)
+            break;//不再读入数据时结束循环
+        if(data[i]!=-1)//若读入的data不是-1,创建此节点的右孩子节点
         {
             T->right=createTreeNode(data[i],NULL,NULL);
-        }
-        EnQueue(Q,T->right);
+        }//若读入的是-1,由于创建节点时已初始化其left与right指针指向NULL故无需操作
+        EnQueue(Q,T->right);//该节点的left域的值入队
     }
     return Thead;
 }
@@ -247,10 +247,10 @@ TreeNodePtr createTreeWithLevelOrder(int *data, int size)
 void preOrderTraverse(TreeNodePtr root)
 {
     if(root==NULL)
-        return;
+        return;//根节点为空时返回
     printf("%d ",root->val);
     preOrderTraverse(root->left);
-    preOrderTraverse(root->right);
+    preOrderTraverse(root->right);//递归调用实现遍历
 }
 
 /**
@@ -261,10 +261,10 @@ void preOrderTraverse(TreeNodePtr root)
 void inOrderTraverse(TreeNodePtr root)
 {
     if(root==NULL)
-        return;
+        return;//根节点为空时返回
     inOrderTraverse(root->left);
     printf("%d ",root->val);
-    inOrderTraverse(root->right);
+    inOrderTraverse(root->right);//递归调用实现遍历
 }
 
 /**
@@ -275,42 +275,48 @@ void inOrderTraverse(TreeNodePtr root)
 void postOrderTraverse(TreeNodePtr root)
 {
     if(root==NULL)
-        return;
+        return;//根节点为空时返回
     postOrderTraverse(root->left);
-    postOrderTraverse(root->right);
+    postOrderTraverse(root->right);//递归调用实现遍历
     printf("%d ",root->val);
 }
 
 /** TODO: 任务二：请你通过深度优先遍历来求取该二叉树的最大路径和 */
 int maxPathSum(TreeNodePtr root, int sum)
-{
+{//用sum表示从原树的根节点到此子树根节点的路径长(不计入此子树的根节点)
     if(root==NULL)
-        return sum+0;
-    sum+=root->val;
+        return sum;//根节点为NULL时直接返回sum
+    sum+=root->val;//加上此子树根节点的val值
     int Ls,Rs;
-    Ls=maxPathSum(root->left,sum);
-    Rs=maxPathSum(root->right,sum);
-    return Ls>Rs ? Ls : Rs;
+    Ls=maxPathSum(root->left,sum);//Ls为走此节点左子树的最大路径和
+    Rs=maxPathSum(root->right,sum);//Rs为走此节点右子树的最大路径和
+    return Ls>Rs ? Ls : Rs;//返回其中较大的数
 }
 
 /** ToDO: 任务三：请你通过递归求取该二叉树的所有左子叶权重之和 */
 int sumOfLeftLeaves(TreeNodePtr root)
 {
     if(root==NULL)
-        return 0;
-    if(root->left!=NULL&&root->left->left==NULL&&root->left->right==NULL)
-        return root->left->val;
+        return 0;//根节点为空返回0
+    if(root->left!=NULL&&root->left->left==NULL&&root->left->right==NULL)//当此节点的左孩子节点是叶子节点
+        return root->left->val+sumOfLeftLeaves(root->right);//返回左孩子节点的val加上右子树的左子叶权重和
     else
-        return sumOfLeftLeaves(root->left)+sumOfLeftLeaves(root->right);
+        return sumOfLeftLeaves(root->left)+sumOfLeftLeaves(root->right);//否则返回左子树与右子树的坐姿也权重和之和
+    /**用三目运算符实现的单行函数*/
+    //return root?(((root->left!=NULL&&root->left->left==NULL&&root->left->right==NULL)?root->left->val:sumOfLeftLeaves(root->left))+sumOfLeftLeaves(root->right)):0;
 }
 
 /** TODO: 任务四：请你通过递归求取该树的镜像，即翻转该二叉树 */
 TreeNodePtr invertTree(TreeNodePtr root)
 {
     if(root==NULL)
-        return NULL;
+        return NULL;//当根节点为NULL时,原样返回NULL
     else
         return createTreeNode(root->val,invertTree(root->right),invertTree(root->left));
+        //否则返回一个节点的地址,这个节点是这样的:
+        //根节点的val域与原树相同,左子树为原树右子树的镜像,右子树为原树左子树的镜像
+    /**用三目运算符实现的单行函数*/
+    //return root?createTreeNode(root->val,invertTree(root->right),invertTree(root->left)):NULL;
 }
 
 
