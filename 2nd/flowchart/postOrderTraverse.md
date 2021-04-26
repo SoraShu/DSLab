@@ -1,3 +1,8 @@
+---
+export_on_save:
+    puppeteer: ["png"] # 保存文件时导出 PNG
+---
+
 ```flow
 st=>start: postOrderTraverse
 e=>end: end

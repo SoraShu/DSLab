@@ -1,3 +1,9 @@
+---
+
+export_on_save:
+    puppeteer: ["png"] # 保存文件时导出 PNG
+---
+
 ```flow
 st=>start: createTreeWithLevelOrder
 e=>end: end
@@ -30,14 +36,17 @@ op8=>operation: 在T的右孩子处创建节点
 val域初始化为data[i]，
 两个指针域初始化为NULL
 op9=>operation: T的右孩子入队
-
+cd8=>condition: 队列Q为不为空
+op10=>operation: 队列Q头元素出队
 st->in->cd1(yes,right)->outN->e
 cd1(no)->op1->op2->op3->cd2(yes)->op4->cd3
 cd3(yes)->op5(top)->cd2
-cd3(no,bottom)->cd4(yes,right)->outH->e
+cd3(no,bottom)->cd4(yes,right)->cd8
 cd4(no)->cd5(yes,right)->op6->op7
-cd5(no)->op7->cd6(yes,right)->outH
+cd5(no)->op7->cd6(yes,right)->cd8
 cd6(no)->cd7(yes,right)->op8->op9
 cd7(no)->op9(left)->cd2
+cd8(yes,right)->op10(top)->cd8
+cd8(no)->outH->e
 ```
 

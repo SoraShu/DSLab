@@ -236,6 +236,10 @@ TreeNodePtr createTreeWithLevelOrder(int *data, int size)
         }//若读入的是-1,由于创建节点时已初始化其left与right指针指向NULL故无需操作
         EnQueue(Q,T->right);//该节点的left域的值入队
     }
+    if(!QueueEmpty(Q))
+    {
+        DeQueue(Q);
+    }//释放队列Q的内存
     return Thead;
 }
 
