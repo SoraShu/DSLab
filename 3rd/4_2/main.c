@@ -34,15 +34,15 @@ int main()
         int station_num;
         int pre,now,dis;
         scanf("%d\n",&station_num);
-        scanf("%d %d\n",&pre,&dis);
+        scanf("%d\t%d\n",&pre,&dis);
         g.num[pre]++;
         for(int j=1; j<station_num; j++)
         {
-            scanf("%d %d\n",&now,&dis);
+            scanf("%d\t%d\n",&now,&dis);
             g.matrix[now][pre]=g.matrix[pre][now]=dis;
             edge_num++;
             g.num[now]++;
-            now=pre;
+            pre=now;
         }
     }
     g.E=edge_num;
@@ -51,6 +51,8 @@ int main()
     fclose(stdin);
     //-------------------------------------------------------------
     //文件读取结束
+
+
 
     //问题1
     printf("问题1：\n");
