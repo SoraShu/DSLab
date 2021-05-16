@@ -2,16 +2,15 @@
 #include <stdlib.h>
 #include <string.h>
 
-# define max_dis 100000
+#define max_dis 100000
 
 typedef char vextype[20];
 typedef struct
 {
-    int N, E;//N是顶点数，E是边数
-    int **matrix;//储存邻接矩阵
-    vextype *vertex;//存储节点的名字
+    int N, E;        //N是顶点数，E是边数
+    int **matrix;    //储存邻接矩阵
+    vextype *vertex; //存储节点的名字
 } Graph;
-
 
 Graph createGraph(int n);
 int isConnected(Graph g);
@@ -20,10 +19,12 @@ double clusteringCoefficient(Graph g);
 void computeEcc(Graph g, int *diameter, int *radius);
 int dijkstra(Graph g, int start, int end, int *path);
 void printPath(int d, int *diameter_path, Graph g);
-void DFS(Graph g,int v,int visited[]);//新增
-double CSofOneNode(Graph g,int v);//新增
-int FindMax(int arr[],int n);//新增
-int FindMin(int arr[],int n);//新增
+void DFS(Graph g, int v, int visited[]); //新增
+double CSofOneNode(Graph g, int v);      //新增
+int FindMax(int arr[], int n);           //新增
+int FindMin(int arr[], int n);           //新增
+void DestoryTree(Graph g);               //新增
+
 /**
  * 创建一个节点数为n的图
  * @param n 节点个数
@@ -34,10 +35,10 @@ Graph createGraph(int n)
     int i, j;
     Graph g;
     g.N = n;
-    g.matrix = (int **) malloc(sizeof(int *) * g.N);
+    g.matrix = (int **)malloc(sizeof(int *) * g.N);
     for (i = 0; i < n; i++)
     {
-        g.matrix[i] = (int *) malloc(sizeof(int) * g.N);
+        g.matrix[i] = (int *)malloc(sizeof(int) * g.N);
     }
     for (i = 0; i < g.N; i++)
     {
@@ -50,8 +51,21 @@ Graph createGraph(int n)
     {
         g.matrix[i][i] = 0;
     }
-    g.vertex = (vextype *) malloc(sizeof(vextype) * g.N);
+    g.vertex = (vextype *)malloc(sizeof(vextype) * g.N);
     return g;
+}
+/**
+ * @brief 删除树
+ * 
+ * @param g 
+ */
+void DestoryTree(Graph g)
+{
+    for (int i = 0; i < g.N; i++)
+    {
+        free(g.matrix[i]);
+    }
+    free(g.vertex);
 }
 
 /**
@@ -70,8 +84,7 @@ void printPath(int d, int *path, Graph g)
         printf("%s ", g.vertex[path[k]]);
         path_length += g.matrix[path[k]][path[k + 1]];
         k++;
-    }
-    while (path_length < d);
+    } while (path_length < d);
     printf("%s\n", g.vertex[path[k]]);
 }
 
@@ -83,24 +96,19 @@ void printPath(int d, int *path, Graph g)
 int isConnected(Graph g)
 {
     //TODO
-    int *visited=(int *)calloc(g.N,sizeof(int));//初始化
-    /*for(int i=0;i<g.N;i++)
+    int *visited = (int *)calloc(g.N, sizeof(int)); //初始化visited数组各元素为0
+    int flag = 1;                                   //先假定图是连通的
+    DFS(g, 0, visited);                             //对v_0进行DFS
+    for (int i = 0; i < g.N; i++)
     {
-        visited[i]=0;
-    }*/
-    int flag=1;
-    DFS(g,0,visited);
-    for(int i=0; i<g.N; i++)
-    {
-        if(!visited[i])
+        if (!visited[i])
         {
-            flag=0;
+            flag = 0;
             break;
-        }
+        } //若有节点未被访问，说明节点不连通
     }
     return flag;
 }
-
 
 /**
  * 深度优先搜索(辅助)
@@ -108,16 +116,15 @@ int isConnected(Graph g)
  * @param v 节点的下标
  * @param visited 标志数组
  */
-void DFS(Graph g,int v,int visited[])
+void DFS(Graph g, int v, int visited[])
 {
-    visited[v]=1;
-    for(int w=0; w<g.N; w++)
+    visited[v] = 1;
+    for (int w = 0; w < g.N; w++)
     {
-        if(!visited[w]&&w!=v&&g.matrix[v][w]!=max_dis)
-            DFS(g,w,visited);
+        if (!visited[w] && w != v && g.matrix[v][w] != max_dis)
+            DFS(g, w, visited); //递归实现DFS
     }
 }
-
 
 /**
  * 计算每个点的度
@@ -127,13 +134,13 @@ void DFS(Graph g,int v,int visited[])
 void nodeDegree(Graph g, int *node_degree)
 {
     //TODO
-    for(int i=0; i<g.N; i++)
+    for (int i = 0; i < g.N; i++)
     {
-        node_degree[i]=0;
-        for(int j=0; j<g.N; j++)
+        node_degree[i] = 0;
+        for (int j = 0; j < g.N; j++)
         {
-            if(j!=i&&g.matrix[i][j]!=max_dis)
-                node_degree[i]++;
+            if (j != i && g.matrix[i][j] != max_dis)
+                node_degree[i]++; //根据邻接矩阵判断节点度数
         }
     }
 }
@@ -146,10 +153,11 @@ void nodeDegree(Graph g, int *node_degree)
 double clusteringCoefficient(Graph g)
 {
     //TODO
-    double sum=0;
-    for(int v=0; v<g.N; v++)
-        sum+=CSofOneNode(g,v);
-    return sum/g.N;
+    double sum = 0;
+    //取所有节点聚类系数的平均值
+    for (int v = 0; v < g.N; v++)
+        sum += CSofOneNode(g, v);
+    return sum / g.N;
 }
 
 /**
@@ -159,28 +167,29 @@ double clusteringCoefficient(Graph g)
  * @return 返回聚类系数
  */
 
-double CSofOneNode(Graph g,int v)
+double CSofOneNode(Graph g, int v)
 {
-    int *Friend=(int *)malloc(sizeof(int)*(g.N));
-    int top=0;
-    int nFriends=0;
-    for(int w=0; w<g.N; w++)
+    int *Friend = (int *)malloc(sizeof(int) * (g.N));
+    int top = 0;
+    int nFriends = 0;
+    for (int w = 0; w < g.N; w++)
     {
-        if(w!=v&&g.matrix[v][w]!=max_dis)
-            Friend[top++]=w;
+        if (w != v && g.matrix[v][w] != max_dis)
+            Friend[top++] = w; //与之相邻的节点下标用数组储存
     }
-    for(int i=0; i<top; i++)
+    //求取相邻的顶点邻接的对数
+    for (int i = 0; i < top; i++)
     {
-        for(int j=i+1; j<top; j++)
+        for (int j = i + 1; j < top; j++)
         {
-            if(g.matrix[Friend[i]][Friend[j]]!=max_dis)
+            if (g.matrix[Friend[i]][Friend[j]] != max_dis)
                 nFriends++;
         }
     }
-    if(nFriends==0)
+    if (nFriends == 0)
         return 0;
     else
-        return 2.0*nFriends/(top*(top-1));
+        return 2.0 * nFriends / (top * (top - 1));
 }
 
 /**
@@ -195,48 +204,48 @@ int dijkstra(Graph g, int start, int end, int *path)
 {
     //TODO
     //为了输出方便，可从end出发寻找start，用pre记录前驱元，逆序输出即为从start到end的正序路径
-    int *pre=(int *)malloc(sizeof(int)*g.N);//用pre数组记录前驱元
-    int *length=(int *)malloc(sizeof(int)*g.N);//用length数组记录路径长度
-    int *flag=(int *)malloc(sizeof(int)*g.N);//用flag数组记录是否在U集合中
-    for(int i=0; i<g.N; i++)
+    int *pre = (int *)malloc(sizeof(int) * g.N);    //用pre数组记录前驱元
+    int *length = (int *)malloc(sizeof(int) * g.N); //用length数组记录路径长度
+    int *flag = (int *)malloc(sizeof(int) * g.N);   //用flag数组记录是否在U集合中
+    for (int i = 0; i < g.N; i++)
     {
-        pre[i]=end;//从end出发
-        length[i]=g.matrix[end][i];//初值为从i直接到达
-        flag[i]=0;//先将U集合置为空
+        pre[i] = end;                 //从end出发
+        length[i] = g.matrix[end][i]; //初值为从i直接到达
+        flag[i] = 0;                  //先将U集合置为空
     }
-    flag[end]=1;//将end包含进U集
-    while(1)//找到start前一直循环
+    flag[end] = 1; //将end包含进U集
+    while (1)      //找到start前一直循环
     {
-        int min=max_dis;
+        int min = max_dis;
         int v;
         //寻找E-U集里距离end最近的点v
-        for(int w=0; w<g.N; w++)
+        for (int w = 0; w < g.N; w++)
         {
-            if(!flag[w]&&length[w]<min)
+            if (!flag[w] && length[w] < min)
             {
-                v=w;
-                min=length[v];
+                v = w;
+                min = length[v];
             }
         }
-        flag[v]=1;//将v包含进U中
-        if(v==start)//找到start结束循环
+        flag[v] = 1;    //将v包含进U中
+        if (v == start) //找到start结束循环
             break;
-        for(int w=0; w<g.N; w++)//调整E-U中所有顶点到end的最短距离
+        for (int w = 0; w < g.N; w++) //调整E-U中所有顶点到end的最短距离
         {
-            if((!flag[w])&&(min+g.matrix[v][w]<length[w]))
+            if ((!flag[w]) && (min + g.matrix[v][w] < length[w]))
             {
-                length[w]=min+g.matrix[v][w];
-                pre[w]=v;
+                length[w] = min + g.matrix[v][w];
+                pre[w] = v;
             }
         }
     }
-    int i=0;
-    for(int v=start; v!=end; v=pre[v])
+    int i = 0;
+    for (int v = start; v != end; v = pre[v])
     {
-        path[i++]=v;
+        path[i++] = v;
     }
-    path[i]=end;
-    return length[start];
+    path[i] = end;
+    return length[start]; //lenth[start]储存end到start的最短路径
 }
 
 /**
@@ -249,12 +258,12 @@ int dijkstra(Graph g, int start, int end, int *path)
 void computeEcc(Graph g, int *diameter, int *radius)
 {
     //TODO
-    int **M=(int **) malloc(sizeof(int *) * g.N);
-    int *Eccentricity=(int *)malloc(sizeof(int)*g.N);
+    int **M = (int **)malloc(sizeof(int *) * g.N);        //Floyd算法使用的临时二维数组
+    int *Eccentricity = (int *)malloc(sizeof(int) * g.N); //偏心率数组
     for (int i = 0; i < g.N; i++)
     {
-        M[i] = (int *) malloc(sizeof(int) * g.N);
-        Eccentricity[i]=0;
+        M[i] = (int *)malloc(sizeof(int) * g.N);
+        Eccentricity[i] = 0;
     }
     for (int i = 0; i < g.N; i++)
     {
@@ -263,21 +272,22 @@ void computeEcc(Graph g, int *diameter, int *radius)
             M[i][j] = g.matrix[i][j];
         }
     }
-    for(int k=0; k<g.N; k++)
+    for (int k = 0; k < g.N; k++)
     {
-        for(int i=0; i<g.N; i++)
+        for (int i = 0; i < g.N; i++)
         {
-            for(int j=0; j<g.N; j++)
+            for (int j = 0; j < g.N; j++)
             {
-                if(M[i][j]>M[i][k]+M[k][j])
-                    M[i][j]=M[i][k]+M[k][j];
+                //当过k点的由i到j路径长小于现在储存的i到j路径
+                if (M[i][j] > M[i][k] + M[k][j])
+                    M[i][j] = M[i][k] + M[k][j];
             }
         }
     }
-    for(int i=0; i<g.N; i++)
-        Eccentricity[i]=FindMax(M[i],g.N);
-    *diameter=FindMax(Eccentricity,g.N);
-    *radius=FindMin(Eccentricity,g.N);
+    for (int i = 0; i < g.N; i++)
+        Eccentricity[i] = FindMax(M[i], g.N);
+    *diameter = FindMax(Eccentricity, g.N);
+    *radius = FindMin(Eccentricity, g.N);
 }
 
 /**
@@ -286,12 +296,12 @@ void computeEcc(Graph g, int *diameter, int *radius)
  * @param n 数组长度
  * @return 数组最大值
  */
-int FindMax(int arr[],int n)
+int FindMax(int arr[], int n)
 {
-    int max=0;
-    for(int i=0; i<n; i++)
-        if(max<arr[i])
-            max=arr[i];
+    int max = 0;
+    for (int i = 0; i < n; i++)
+        if (max < arr[i])
+            max = arr[i];
     return max;
 }
 
@@ -301,12 +311,12 @@ int FindMax(int arr[],int n)
  * @param n 数组长度
  * @return 数组最小值
  */
-int FindMin(int arr[],int n)
+int FindMin(int arr[], int n)
 {
-    int min=max_dis;
-    for(int i=0; i<n; i++)
-        if(min>arr[i])
-            min=arr[i];
+    int min = max_dis;
+    for (int i = 0; i < n; i++)
+        if (min > arr[i])
+            min = arr[i];
     return min;
 }
 
@@ -324,7 +334,7 @@ int main()
         printf("\ncase %d:\n", ca++);
         int start_idx, end_idx, weight;
         Graph g = createGraph(node_num);
-        for(int i = 0; i < node_num; i++)
+        for (int i = 0; i < node_num; i++)
         {
             sprintf(g.vertex[i], "%d", i);
         }
@@ -340,7 +350,7 @@ int main()
         int *degree = (int *)malloc(sizeof(int) * g.N);
         nodeDegree(g, degree);
         printf("degree distribution:\n");
-        for(int i=0; i<g.N; i++)
+        for (int i = 0; i < g.N; i++)
         {
             printf("node%s:%d,", g.vertex[i], degree[i]);
         }
@@ -350,7 +360,7 @@ int main()
         double c = clusteringCoefficient(g);
         printf("clustering coefficient:%f\n", c);
 
-        if(isConnected(g))
+        if (isConnected(g))
         {
             int *short_path = (int *)malloc(sizeof(int) * g.N);
             int dis = dijkstra(g, 1, 3, short_path);
@@ -363,6 +373,7 @@ int main()
             printf("diameter:%d\n", diameter);
             printf("radius:%d\n", radius);
         }
+        DestoryTree(g); //删除树
     }
 
     return 0;

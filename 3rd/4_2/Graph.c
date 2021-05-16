@@ -1,17 +1,22 @@
 #include "Graph.h"
 
-//³õÊ¼»¯Í¼
+/**
+ * @brief åˆå§‹åŒ–å›¾
+ *
+ * @param n é¡¶ç‚¹æ•°
+ * @return Graph å›¾
+ */
 Graph createGraph(int n)
 {
     int i, j;
     Graph g;
     g.N = n;
-    g.matrix = (int **) malloc(sizeof(int *) * g.N);
-    g.num=(int *)malloc(sizeof(int)*g.N);
+    g.matrix = (int **)malloc(sizeof(int *) * g.N);
+    g.num = (int *)malloc(sizeof(int) * g.N);
     for (i = 0; i < n; i++)
     {
-        g.matrix[i] = (int *) malloc(sizeof(int) * g.N);
-        g.num[i]=0;
+        g.matrix[i] = (int *)malloc(sizeof(int) * g.N);
+        g.num[i] = 0;
     }
     for (i = 0; i < g.N; i++)
     {
@@ -24,76 +29,80 @@ Graph createGraph(int n)
     {
         g.matrix[i][i] = 0;
     }
-    g.vertex = (vextype *) malloc(sizeof(vextype) * g.N);
-    g.ID=(int *)malloc(sizeof(int)*g.N);
+    g.vertex = (vextype *)malloc(sizeof(vextype) * g.N);
+    g.ID = (int *)malloc(sizeof(int) * g.N);
     return g;
 }
 
-//É¾³ıÍ¼
+/**
+ * @brief åˆ é™¤å›¾
+ *
+ * @param g å›¾
+ */
 void DestoryGraph(Graph g)
 {
-
+    for (int i = 0; i < g.N; i++)
+    {
+        free(g.matrix[i]);
+    }
+    free(g.matrix);
+    free(g.vertex);
+    free(g.ID);
+    free(g.num);
 }
 
 /**
- * ÅĞ¶ÏÍ¼ÊÇ·ñÁ¬Í¨
- * @param g Í¼
- * @return Á¬Í¨·µ»Ø1£¬·ñÔò·µ»Ø0
+ * åˆ¤æ–­å›¾æ˜¯å¦è¿é€š
+ * @param g å›¾
+ * @return è¿é€šè¿”å›1ï¼Œå¦åˆ™è¿”å›0
  */
 int isConnected(Graph g)
 {
-    //TODO
-    int *visited=(int *)calloc(g.N,sizeof(int));//³õÊ¼»¯
-    /*for(int i=0;i<g.N;i++)
+    int *visited = (int *)calloc(g.N, sizeof(int)); //åˆå§‹åŒ–
+    int flag = 1;
+    DFS(g, 0, visited);
+    for (int i = 0; i < g.N; i++)
     {
-        visited[i]=0;
-    }*/
-    int flag=1;
-    DFS(g,0,visited);
-    for(int i=0; i<g.N; i++)
-    {
-        if(!visited[i])
+        if (!visited[i])
         {
-            flag=0;
+            flag = 0;
             break;
         }
     }
     return flag;
 }
 
-
 /**
- * Éî¶ÈÓÅÏÈËÑË÷(¸¨Öú)
- * @param g Í¼
- * @param v ½ÚµãµÄÏÂ±ê
- * @param visited ±êÖ¾Êı×é
+ * æ·±åº¦ä¼˜å…ˆæœç´¢(è¾…åŠ©)
+ * @param g å›¾
+ * @param v èŠ‚ç‚¹çš„ä¸‹æ ‡
+ * @param visited æ ‡å¿—æ•°ç»„
  */
-void DFS(Graph g,int v,int visited[])
+void DFS(Graph g, int v, int visited[])
 {
-    visited[v]=1;
-    for(int w=0; w<g.N; w++)
+    visited[v] = 1;
+    for (int w = 0; w < g.N; w++)
     {
-        if(!visited[w]&&w!=v&&g.matrix[v][w]!=max_dis)
-            DFS(g,w,visited);
+        if (!visited[w] && w != v && g.matrix[v][w] != max_dis)
+            DFS(g, w, visited);
     }
 }
 
 /**
- * ¼ÆËãÍ¼µÄÖ±¾¶ºÍ°ë¾¶£¬ÌáÊ¾: FloydËã·¨
- * @param g Í¼
- * @param diameter Ö¸ÏòÖ±¾¶±äÁ¿µÄÖ¸Õë
- * @param radius Ö¸Ïò°ë¾¶±äÁ¿µÄÖ¸Õë
+ * è®¡ç®—å›¾çš„ç›´å¾„å’ŒåŠå¾„ï¼Œæç¤º: Floydç®—æ³•
+ * @param g å›¾
+ * @param diameter æŒ‡å‘ç›´å¾„å˜é‡çš„æŒ‡é’ˆ
+ * @param radius æŒ‡å‘åŠå¾„å˜é‡çš„æŒ‡é’ˆ
  * @return void
  */
 void computeEcc(Graph g, int *diameter, int *radius)
 {
-    //TODO
-    int **M=(int **) malloc(sizeof(int *) * g.N);
-    int *Eccentricity=(int *)malloc(sizeof(int)*g.N);
+    int **M = (int **)malloc(sizeof(int *) * g.N);
+    int *Eccentricity = (int *)malloc(sizeof(int) * g.N);
     for (int i = 0; i < g.N; i++)
     {
-        M[i] = (int *) malloc(sizeof(int) * g.N);
-        Eccentricity[i]=0;
+        M[i] = (int *)malloc(sizeof(int) * g.N);
+        Eccentricity[i] = 0;
     }
     for (int i = 0; i < g.N; i++)
     {
@@ -102,96 +111,114 @@ void computeEcc(Graph g, int *diameter, int *radius)
             M[i][j] = g.matrix[i][j];
         }
     }
-    for(int k=0; k<g.N; k++)
+    for (int k = 0; k < g.N; k++)
     {
-        for(int i=0; i<g.N; i++)
+        for (int i = 0; i < g.N; i++)
         {
-            for(int j=0; j<g.N; j++)
+            for (int j = 0; j < g.N; j++)
             {
-                if(M[i][j]>M[i][k]+M[k][j])
-                    M[i][j]=M[i][k]+M[k][j];
+                if (M[i][j] > M[i][k] + M[k][j])
+                    M[i][j] = M[i][k] + M[k][j];
             }
         }
     }
-    for(int i=0; i<g.N; i++)
-        Eccentricity[i]=FindMax(M[i],g.N);
-    *diameter=FindMax(Eccentricity,g.N);
-    *radius=FindMin(Eccentricity,g.N);
+    for (int i = 0; i < g.N; i++)
+        Eccentricity[i] = FindMax(M[i], g.N);
+    *diameter = FindMax(Eccentricity, g.N);
+    *radius = FindMin(Eccentricity, g.N);
 }
 
 /**
- * Ê¹ÓÃdijkstraËã·¨¼ÆËãµ¥Ô´×î¶ÌÂ·¾¶
- * @param g Í¼
- * @param start Æğµã
- * @param end ÖÕµã
- * @param path ´Óstartµ½endµÄÂ·¾¶, [start,...,end]
- * @return Â·¾¶³¤¶È
+ * ä½¿ç”¨dijkstraç®—æ³•è®¡ç®—å•æºæœ€çŸ­è·¯å¾„
+ * @param g å›¾
+ * @param start èµ·ç‚¹
+ * @param end ç»ˆç‚¹
+ * @param path ä»startåˆ°endçš„è·¯å¾„, [start,...,end]
+ * @return è·¯å¾„é•¿åº¦
  */
 int dijkstra(Graph g, int start, int end, int *path)
 {
-    //TODO
-    //ÎªÁËÊä³ö·½±ã£¬¿É´Óend³ö·¢Ñ°ÕÒstart£¬ÓÃpre¼ÇÂ¼Ç°ÇıÔª£¬ÄæĞòÊä³ö¼´Îª´Óstartµ½endµÄÕıĞòÂ·¾¶
-    int *pre=(int *)malloc(sizeof(int)*g.N);//ÓÃpreÊı×é¼ÇÂ¼Ç°ÇıÔª
-    int *length=(int *)malloc(sizeof(int)*g.N);//ÓÃlengthÊı×é¼ÇÂ¼Â·¾¶³¤¶È
-    int *flag=(int *)malloc(sizeof(int)*g.N);//ÓÃflagÊı×é¼ÇÂ¼ÊÇ·ñÔÚU¼¯ºÏÖĞ
-    for(int i=0; i<g.N; i++)
+    //ä¸ºäº†è¾“å‡ºæ–¹ä¾¿ï¼Œå¯ä»endå‡ºå‘å¯»æ‰¾startï¼Œç”¨preè®°å½•å‰é©±å…ƒï¼Œé€†åºè¾“å‡ºå³ä¸ºä»startåˆ°endçš„æ­£åºè·¯å¾„
+    int *pre = (int *)malloc(sizeof(int) * g.N);    //ç”¨preæ•°ç»„è®°å½•å‰é©±å…ƒ
+    int *length = (int *)malloc(sizeof(int) * g.N); //ç”¨lengthæ•°ç»„è®°å½•è·¯å¾„é•¿åº¦
+    int *flag = (int *)malloc(sizeof(int) * g.N);   //ç”¨flagæ•°ç»„è®°å½•æ˜¯å¦åœ¨Ué›†åˆä¸­
+    for (int i = 0; i < g.N; i++)
     {
-        pre[i]=end;//´Óend³ö·¢
-        length[i]=g.matrix[end][i];//³õÖµÎª´ÓiÖ±½Óµ½´ï
-        flag[i]=0;//ÏÈ½«U¼¯ºÏÖÃÎª¿Õ
+        pre[i] = end;                 //ä»endå‡ºå‘
+        length[i] = g.matrix[end][i]; //åˆå€¼ä¸ºä»iç›´æ¥åˆ°è¾¾
+        flag[i] = 0;                  //å…ˆå°†Ué›†åˆç½®ä¸ºç©º
     }
-    flag[end]=1;//½«end°üº¬½øU¼¯
-    while(1)//ÕÒµ½startÇ°Ò»Ö±Ñ­»·
+    flag[end] = 1; //å°†endåŒ…å«è¿›Ué›†
+    while (1)      //æ‰¾åˆ°startå‰ä¸€ç›´å¾ªç¯
     {
-        int min=max_dis;
+        int min = max_dis;
         int v;
-        //Ñ°ÕÒE-U¼¯Àï¾àÀëend×î½üµÄµãv
-        for(int w=0; w<g.N; w++)
+        //å¯»æ‰¾E-Ué›†é‡Œè·ç¦»endæœ€è¿‘çš„ç‚¹v
+        for (int w = 0; w < g.N; w++)
         {
-            if(!flag[w]&&length[w]<min)
+            if (!flag[w] && length[w] < min)
             {
-                v=w;
-                min=length[v];
+                v = w;
+                min = length[v];
             }
         }
-        flag[v]=1;//½«v°üº¬½øUÖĞ
-        if(v==start)//ÕÒµ½start½áÊøÑ­»·
+        flag[v] = 1;    //å°†våŒ…å«è¿›Uä¸­
+        if (v == start) //æ‰¾åˆ°startç»“æŸå¾ªç¯
             break;
-        for(int w=0; w<g.N; w++)//µ÷ÕûE-UÖĞËùÓĞ¶¥µãµ½endµÄ×î¶Ì¾àÀë
+        for (int w = 0; w < g.N; w++) //è°ƒæ•´E-Uä¸­æ‰€æœ‰é¡¶ç‚¹åˆ°endçš„æœ€çŸ­è·ç¦»
         {
-            if((!flag[w])&&(min+g.matrix[v][w]<length[w]))
+            if ((!flag[w]) && (min + g.matrix[v][w] < length[w]))
             {
-                length[w]=min+g.matrix[v][w];
-                pre[w]=v;
+                length[w] = min + g.matrix[v][w];
+                pre[w] = v;
             }
         }
     }
-    int i=0;
-    for(int v=start; v!=end; v=pre[v])
+    int i = 0;
+    for (int v = start; v != end; v = pre[v])
     {
-        path[i++]=v;
+        path[i++] = v;
     }
-    path[i]=end;
+    path[i] = end;
     return length[start];
 }
 
 /**
- * ¸ù¾İ¾àÀëdºÍÂ·¾¶Êı×épathÊä³öÂ·¾¶£¬ÕâÑù¾Í²»ĞèÒªÂ·¾¶µÄ½ÚµãÊıÒ²ÄÜÕıÈ·Êä³öÂ·¾¶
- * @param d Â·¾¶³¤¶È
- * @param path ´¢´æÂ·¾¶µÄÊı×é
- * @param g Í¼
+ * æ ¹æ®è·ç¦»då’Œè·¯å¾„æ•°ç»„pathè¾“å‡ºè·¯å¾„ï¼Œè¿™æ ·å°±ä¸éœ€è¦è·¯å¾„çš„èŠ‚ç‚¹æ•°ä¹Ÿèƒ½æ­£ç¡®è¾“å‡ºè·¯å¾„
+ * @param d è·¯å¾„é•¿åº¦
+ * @param path å‚¨å­˜è·¯å¾„çš„æ•°ç»„
+ * @param g å›¾
  */
 void printPath(int d, int *path, Graph g)
 {
     int k = 0;
     int path_length = 0;
-    printf("Â·¾¶(¸ñÊ½ÎªÕ¾ºÅ_Õ¾Ãû): \n");
+    printf("è·¯å¾„(æ ¼å¼ä¸ºç«™å·_ç«™å): \n");
     do
     {
-        printf("%d_%s -> ",g.ID[path[k]] ,g.vertex[path[k]]);
+        printf("%d_%s -> ", g.ID[path[k]], g.vertex[path[k]]);
         path_length += g.matrix[path[k]][path[k + 1]];
         k++;
-    }
-    while (path_length < d);
-    printf("%d_%s\n\n",g.ID[path[k]] , g.vertex[path[k]]);
+    } while (path_length < d);
+    printf("%d_%s\n\n", g.ID[path[k]], g.vertex[path[k]]);
+}
+
+//è®¡ç®—æ•°ç»„çš„æœ€å¤§å€¼
+int FindMax(int arr[], int n)
+{
+    int max = 0;
+    for (int i = 0; i < n; i++)
+        if (max < arr[i])
+            max = arr[i];
+    return max;
+}
+
+//è®¡ç®—æ•°ç»„çš„æœ€å°å€¼
+int FindMin(int arr[], int n)
+{
+    int min = max_dis;
+    for (int i = 0; i < n; i++)
+        if (min > arr[i])
+            min = arr[i];
+    return min;
 }

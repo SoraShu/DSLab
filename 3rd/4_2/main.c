@@ -3,123 +3,98 @@
 #include <string.h>
 #include "Graph.h"
 
-int FindMax(int arr[],int n);
-int FindMin(int arr[],int n);
-
 int main()
 {
-    //ÎÄ¼ş¶ÁÈ¡-----------------------------------------------------
-    int node_num,edge_num,line_num;
-    edge_num=0;
-    if (freopen("no2metro.txt", "r", stdin) == NULL)
+    //æ–‡ä»¶è¯»å–-----------------------------------------------------
+    int node_num, edge_num, line_num;
+    edge_num = 0;
+    if (freopen("./no2metro.txt", "r", stdin) == NULL)
     {
         printf("There is an error in reading file no2metro.txt");
         exit(0);
     }
-    scanf("%d\n",&node_num);
-    Graph g=createGraph(node_num);
-    for(int i=0; i<node_num; i++)
+    scanf("%d\n", &node_num);
+    Graph g = createGraph(node_num);
+    for (int i = 0; i < node_num; i++)
     {
-        scanf("%d\t%s\n",&(g.ID[i]),g.vertex[i]);//?
+        scanf("%d\t%s\n", &(g.ID[i]), g.vertex[i]); //è¯»å–æ‰€æœ‰ç«™ç‚¹çš„IDä¸åå­—
     }
-    fclose(stdin);
-    if (freopen("metro.txt", "r", stdin) == NULL)
+    fclose(stdin); //å…³é—­æ–‡ä»¶å¹¶æ¸…é™¤ç¼“å†²åŒº
+    if (freopen("./metro.txt", "r", stdin) == NULL)
     {
         printf("There is an error in reading file metro.txt");
         exit(0);
     }
-    scanf("%d\n%d\n",&node_num,&line_num);
-    for(int i=0; i<line_num; i++)
+    scanf("%d\n%d\n", &node_num, &line_num);
+    for (int i = 0; i < line_num; i++) //æ‰€æœ‰çº¿è·¯éƒ½å‚¨å­˜è¦å¤„ç†ä¸€é
     {
         int station_num;
-        int pre,now,dis;
-        scanf("%d\n",&station_num);
-        scanf("%d\t%d\n",&pre,&dis);
+        int pre, now, dis; //åˆ©ç”¨preç«™ä¸nowç«™çš„å…³ç³»è¿æ¥ä¸¤ç«™å¹¶èµ‹äºˆæƒå€¼
+        scanf("%d\n", &station_num);
+        scanf("%d\t%d\n", &pre, &dis);
         g.num[pre]++;
-        for(int j=1; j<station_num; j++)
+        for (int j = 1; j < station_num; j++)
         {
-            scanf("%d\t%d\n",&now,&dis);
-            g.matrix[now][pre]=g.matrix[pre][now]=dis;
+            scanf("%d\t%d\n", &now, &dis);
+            g.matrix[now][pre] = g.matrix[pre][now] = dis;
             edge_num++;
             g.num[now]++;
-            pre=now;
+            pre = now;
         }
     }
-    g.E=edge_num;
-    g.N=node_num;
-    g.L=line_num;
+    g.E = edge_num;
+    g.N = node_num;
+    g.L = line_num; //å¯¹gçš„å„å‚æ•°è¿›è¡Œåˆå§‹åŒ–
     fclose(stdin);
     //-------------------------------------------------------------
-    //ÎÄ¼ş¶ÁÈ¡½áÊø
+    //æ–‡ä»¶è¯»å–ç»“æŸ
 
-
-
-    //ÎÊÌâ1
-    printf("ÎÊÌâ1£º\n");
-    if(isConnected(g))
+    //é—®é¢˜1
+    printf("é—®é¢˜1ï¼š\n");
+    if (isConnected(g))
     {
-        printf("¸ÃÏßÂ·Í¼ÊÇÁ¬Í¨µÄ¡£\n\n");
+        printf("è¯¥çº¿è·¯å›¾æ˜¯è¿é€šçš„ã€‚\n\n");
     }
     else
     {
-        printf("¸ÃÂ·ÏßÍ¼²»ÊÇÁ¬Í¨µÄ¡£\n\n");
+        printf("è¯¥è·¯çº¿å›¾ä¸æ˜¯è¿é€šçš„ã€‚\n\n");
     }
 
-
-    //ÎÊÌâ2
-    int max=0;
+    //é—®é¢˜2
+    int max = 0;
     int v;
-    for(int i=0; i<g.N; i++)
+    //æ±‚å–æ•°åˆ—æœ€å¤§å€¼å¹¶è¿”å›è¯¥å€¼çš„ç´¢å¼•
+    for (int i = 0; i < g.N; i++)
     {
-        if(max<g.num[i])
+        if (max < g.num[i])
         {
-            max=g.num[i];
-            v=i;
+            max = g.num[i];
+            v = i;
         }
     }
-    printf("ÎÊÌâ2£º\n");
-    printf("»»³ËÏßÂ·×î¶àµÄÕ¾µã±àºÅÎª%d£¬Õ¾ÃûÎª%s¡£\n",g.ID[v],g.vertex[v]);
-    printf("¹²ÓĞ%dÌõÏßÂ·Í¨¹ı¡£\n\n",g.num[v]);
+    printf("é—®é¢˜2ï¼š\n");
+    printf("æ¢ä¹˜çº¿è·¯æœ€å¤šçš„ç«™ç‚¹ç¼–å·ä¸º%dï¼Œç«™åä¸º%sã€‚\n", g.ID[v], g.vertex[v]);
+    printf("å…±æœ‰%dæ¡çº¿è·¯é€šè¿‡ã€‚\n\n", g.num[v]);
 
-    //Èô¸ÃÍ¼Á¬Í¨£¬¼ÌĞøÍê³ÉÎÊÌâ3ºÍÎÊÌâ4
-    if(isConnected(g))
+    //è‹¥è¯¥å›¾è¿é€šï¼Œç»§ç»­å®Œæˆé—®é¢˜3å’Œé—®é¢˜4
+    if (isConnected(g))
     {
-        //ÎÊÌâ3
-        printf("ÎÊÌâ3£º\n");
+        //é—®é¢˜3
+        printf("é—®é¢˜3ï¼š\n");
         int *short_path = (int *)malloc(sizeof(int) * g.N);
         int dis = dijkstra(g, 82, 1, short_path);
-        printf("´Ó´óÑ§³ÇÕ¾µ½»ú³¡Õ¾×îÉÙĞèÒª%d·ÖÖÓ¡£\n", dis);
+        printf("ä»å¤§å­¦åŸç«™åˆ°æœºåœºç«™æœ€å°‘éœ€è¦%dåˆ†é’Ÿã€‚\n", dis);
         printPath(dis, short_path, g);
         free(short_path);
 
-        //ÎÊÌâ4
-        printf("ÎÊÌâ4£º\n");
+        //é—®é¢˜4
+        printf("é—®é¢˜4ï¼š\n");
         int diameter, radius;
         computeEcc(g, &diameter, &radius);
-        printf("¸ÃÍ¼µÄÖ±¾¶ºÍ°ë¾¶·Ö±ğÎª£º\n");
-        printf("Ö±¾¶:%d\n", diameter);
-        printf("°ë¾¶:%d\n", radius);
+        printf("è¯¥å›¾çš„ç›´å¾„å’ŒåŠå¾„åˆ†åˆ«ä¸ºï¼š\n");
+        printf("ç›´å¾„:%d\n", diameter);
+        printf("åŠå¾„:%d\n", radius);
     }
-
+    DestoryGraph(g);
     return 0;
-}
-
-//¼ÆËãÊı×éµÄ×î´óÖµ
-int FindMax(int arr[],int n)
-{
-    int max=0;
-    for(int i=0; i<n; i++)
-        if(max<arr[i])
-            max=arr[i];
-    return max;
-}
-
-//¼ÆËãÊı×éµÄ×îĞ¡Öµ
-int FindMin(int arr[],int n)
-{
-    int min=max_dis;
-    for(int i=0; i<n; i++)
-        if(min>arr[i])
-            min=arr[i];
-    return min;
 }
